@@ -1,235 +1,287 @@
-# 🚀 AI-Proof Sysadmin Roadmap 2025-2026
-## 12-Month Advanced Track | Sophia Antipolis/Monaco
+# Month 1 — Lab baseline + network segmentation + ops documentation (no Linux basics)
 
-> **For**: Junior sysadmins with existing Linux/Windows/networking foundations  
-> **Commitment**: 1–2h/day | **Budget**: €0–50/month | **Focus**: Hands-on + Gamified
+**Goal:** a clean, documented, repeatable homelab that looks like a small business platform.
 
----
+### Week 1: “Clean baseline”
 
-## 📊 Skills Matrix
+- Define naming standards (hosts, VMs, networks, VLANs)
+- Create “ops repo” (docs + diagrams + inventory)
+- Decide hypervisor primary: **ESXi or Proxmox** (your choice)
 
-| Domain | Q1 | Q2 | Q3 | Q4 |
-|--------|----|----|----|----|
-| **Cloud** | ⬜ Multi-cloud IaC | ⬜ Advanced networking | ⬜ FinOps | ⬜ Cloud-native security |
-| **Containers** | ⬜ Docker security | ⬜ K8s core | ⬜ K8s advanced | ⬜ Service mesh |
-| **Automation** | ⬜ Python DevOps | ⬜ Ansible advanced | ⬜ GitOps | ⬜ Self-healing infra |
-| **Security** | ⬜ Pentesting | ⬜ Zero Trust | ⬜ Compliance auto | ⬜ Threat hunting |
-| **AI/ML Ops** | ⬜ LLM APIs | ⬜ Local LLMs | ⬜ AIOps | ⬜ AI automation |
-| **SRE** | ⬜ Observability | ⬜ SLO/SLI | ⬜ Chaos eng | ⬜ Platform eng |
+### Week 2: Network layout (pfSense + VLANs)
 
----
+- MGMT vs LAN vs (optional) DMZ separation
+- Firewall rules: *explicit allow*, logging enabled
+- DNS + DHCP plan (where it lives, what’s authoritative)
 
-## 🎮 Core Platforms
+### Week 3: Identity + access (practical)
 
-| Platform | Focus | Cost |
-|----------|-------|------|
-| [HackTheBox](https://hackthebox.com) | Advanced pentesting | Free/€14 |
-| [KodeKloud](https://kodekloud.com) | DevOps, K8s | €15/mo |
-| [Killercoda](https://killercoda.com) | K8s, Terraform | Free |
-| [TryHackMe](https://tryhackme.com) | Security paths | Free/€10 |
+- Central admin: AD/LDAP + groups for roles (admins, operators, read-only)
+- Minimum: MFA on your remote access point (VPN/portal)
+
+### Week 4: Observability baseline (so you can operate)
+
+- Central syslog + basic dashboards (Elastic if you already run it)
+- 5 alert rules: storage nearly full, host down, backup job failed, auth anomalies, high CPU/RAM
+
+**Deliverables:** diagram + inventory + firewall policy summary + “how to access / how to troubleshoot basics”.
 
 ---
 
-## 📅 Q1: Cloud & IaC Mastery (Months 1-3)
-### *Skip basics—go multi-cloud*
+# Month 2 — Virtualization + Storage + Backups + Recovery (expanded, as requested)
 
-### Month 1: Terraform + Multi-Cloud
+**Goal:** prove you can **recover**. (This is extremely “AI-proof”.)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W1 | Terraform modules, remote state, workspaces | 🧪 Killercoda Terraform |
-| W2 | AWS advanced (VPC peering, Transit Gateway) | 🎮 [flAWS2](http://flaws2.cloud) |
-| W3 | Azure hybrid (Arc, ExpressRoute concepts) | 🧪 Azure Learn sandboxes |
-| W4 | Multi-cloud Terraform patterns | 🧪 Deploy same app AWS+Azure |
+### Week 1: Hypervisor repeatable baseline
 
-**🏆 Project**: Multi-cloud infrastructure with Terraform modules deploying to both AWS and Azure with shared state.
+- Templates, snapshots, time sync, admin hygiene
+- (ESXi option) practice in **VMware HOL** if you lack licenses/hardware [VMware+1](https://www.vmware.com/resources/hands-on-labs?utm_source=chatgpt.com)
 
----
+### Week 2: Storage design
 
-### Month 2: Advanced Networking & Security
+- 2 datastores/pools: `fast` (runtime) + `backup` (repository)
+- Capacity plan + alert thresholds (80%/90%)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W5 | Zero Trust networking, BeyondCorp model | 📖 Google BeyondCorp papers |
-| W6 | Cloud security posture (AWS Config, Azure Policy) | 🎮 [CloudGoat](https://github.com/RhinoSecurityLabs/cloudgoat) |
-| W7 | Secrets management (Vault, AWS Secrets Manager) | 🧪 HashiCorp Vault labs |
-| W8 | Network security automation (WAF, DDoS) | 🧪 Deploy cloud WAF |
+### Week 3: Backup policy + automation
 
-**🏆 Project**: HashiCorp Vault cluster with auto-unsealing, dynamic secrets for databases, integrated with Terraform.
+- Schedule + retention + verification method
+- Implement with your tool of choice (PBS/Nakivo/Veeam/etc.)
 
----
+### Week 4: Recovery drills (3 scenarios)
 
-### Month 3: Python for Infrastructure
+- File restore, full VM restore, fastest restore method available
+- Write restore report with achieved RTO/RPO
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W9 | Boto3/Azure SDK advanced patterns | 🧪 Build cloud inventory tool |
-| W10 | Infrastructure testing (pytest, Terratest) | 🧪 Test your Terraform |
-| W11 | Custom Ansible modules in Python | 🧪 Build inventory plugin |
-| W12 | API development (FastAPI) for infra tools | 🧪 Create self-service portal |
-
-**🏆 Project**: Python-based self-service infrastructure portal with FastAPI backend, Terraform execution, and audit logging.
+**Deliverables:** backup policy + restore runbook + restore report (timestamps + evidence).
 
 ---
 
-## 📅 Q2: Kubernetes & GitOps (Months 4-6)
-### *Production-grade orchestration*
+# Month 3 — “Infra as code” on-prem: Ansible + templates + standards
 
-### Month 4: Kubernetes Deep Dive
+**Goal:** new VMs become **consistent** and **secure** with minimal manual steps.
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W13 | K8s internals (API server, etcd, scheduler) | 🧪 [K8s The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) |
-| W14 | Advanced networking (CNI, NetworkPolicies, Cilium) | 🧪 Killercoda networking |
-| W15 | Storage (CSI drivers, StatefulSets patterns) | 🧪 Deploy stateful apps |
-| W16 | Security (PSP→PSA, OPA/Gatekeeper, Falco) | 🎮 [Kubernetes Goat](https://madhuakula.com/kubernetes-goat/) |
+### Week 1
 
-**🏆 Project**: Production K8s cluster (k3s/kind) with Cilium CNI, OPA policies, Falco runtime security.
+- Standard baseline role(s): users/groups, updates, SSH/RDP hardening, logging, time sync
 
----
+### Week 2
 
-### Month 5: GitOps & Platform Engineering
+- VM build flow: template + cloud-init/sysprep + post-config with Ansible
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W17 | ArgoCD advanced (App of Apps, ApplicationSets) | 🧪 Killercoda ArgoCD |
-| W18 | Flux CD comparison, GitOps patterns | 🧪 Migrate app to Flux |
-| W19 | Crossplane for infrastructure GitOps | 🧪 Manage cloud resources via K8s |
-| W20 | Internal Developer Platforms (Backstage) | 🧪 Deploy Backstage portal |
+### Week 3
 
-**🏆 Project**: Complete GitOps platform with ArgoCD, Crossplane managing cloud resources, and Backstage developer portal.
+- Service onboarding checklist (what every new server must have)
+
+### Week 4
+
+- “Drift control” day: re-run automation, detect differences, fix
+
+**Deliverables:** Ansible roles + onboarding checklist + “how to add a server in 30 minutes”.
 
 ---
 
-### Month 6: Service Mesh & Advanced Patterns
+# Month 4 — Terraform foundations (cloud-agnostic mindset)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W21 | Istio deep dive (traffic management, security) | 🧪 Istio.io tutorials |
-| W22 | Linkerd as lightweight alternative | 🧪 Compare Istio vs Linkerd |
-| W23 | eBPF and Cilium service mesh | 🧪 Cilium labs |
-| W24 | Multi-cluster Kubernetes patterns | 🧪 Federation setup |
+**Goal:** you can create a full environment from scratch, safely and repeatably.
 
-**🏆 Project**: Multi-cluster K8s with Cilium mesh, cross-cluster service discovery, unified observability.
+### Week 1
 
----
+- Terraform basics + state handling (local first, then remote)
 
-## 📅 Q3: SRE & Security (Months 7-9)
-### *Reliability + Security = Career insurance*
+### Week 2
 
-### Month 7: Advanced Observability
+- Network as code: VPC/VNet + subnets + routes + security controls
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W25 | OpenTelemetry instrumentation | 🧪 Instrument sample apps |
-| W26 | Distributed tracing with Jaeger/Tempo | 🧪 Trace microservices |
-| W27 | Log aggregation at scale (Loki, Vector) | 🧪 Build log pipeline |
-| W28 | AIOps and anomaly detection | 🧪 Integrate AI alerting |
+### Week 3
 
-**🏆 Project**: Full observability stack with OpenTelemetry, Tempo, Loki, Grafana, with ML-based anomaly detection.
+- IAM/RBAC minimal privilege patterns
+
+### Week 4
+
+- “Destroy & rebuild” drill + documentation
+
+**Labs:** KodeKloud hands-on practice is perfect for this style [kodekloud.com+1](https://kodekloud.com/?utm_source=chatgpt.com)
 
 ---
 
-### Month 8: SRE Practices
+# Month 5 — Cloud core (pick a primary: AWS *or* Azure; touch the other lightly)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W29 | SLO/SLI/Error budgets implementation | 📖 Google SRE Workbook |
-| W30 | Chaos engineering (Chaos Monkey, Litmus) | 🧪 [Chaos Engineering labs](https://litmuschaos.io) |
-| W31 | Incident management automation | 🧪 PagerDuty/Opsgenie setup |
-| W32 | Runbook automation and self-healing | 🧪 Build auto-remediation |
+**Goal:** credible “cloud sysadmin / platform” baseline.
 
-**🏆 Project**: SRE dashboard with SLO tracking, automated incident response, chaos experiments in CI/CD.
+### AWS track (primary)
 
----
+- Use AWS Skill Builder courses/labs [skillbuilder.aws+2Amazon Web Services, Inc.+2](https://skillbuilder.aws/?utm_source=chatgpt.com)
+    
+    Weeks: IAM basics → networking → compute → storage → monitoring
+    
 
-### Month 9: Offensive Security for Defenders
+### Azure track (alternative primary)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W33 | Cloud pentesting (AWS/Azure attack paths) | 🎮 HackTheBox Pro Labs |
-| W34 | Container escape and K8s exploitation | 🎮 [Kubernetes Goat](https://madhuakula.com/kubernetes-goat/) |
-| W35 | Purple team: attack + detect | 🧪 Build detection rules |
-| W36 | Threat hunting in cloud environments | 🧪 SIEM + cloud logs |
+- Microsoft Learn modules + Azure Sandbox [Microsoft Learn+1](https://learn.microsoft.com/en-us/training/support/use-your-own-subscription?utm_source=chatgpt.com)
+    
+    Weeks: identity/RBAC → networking → compute → storage → monitoring
+    
 
-**🏆 Project**: Purple team lab with attack simulation, detection engineering, and automated response playbooks.
+**Deliverables:** “landing zone lite” (network + IAM/RBAC + logging) + cost notes.
 
 ---
 
-## 📅 Q4: AI Integration & Capstone (Months 10-12)
-### *AI-augmented operations*
+# Month 6 — CI/CD + GitOps habits (what makes you “platform-ready”)
 
-### Month 10: AI for Infrastructure
+**Goal:** changes are tested, reviewed, and deployed predictably.
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W37 | LLM APIs for automation (OpenAI, Anthropic) | 🧪 AI-powered scripts |
-| W38 | Local LLMs with Ollama for private data | 🧪 Private infra chatbot |
-| W39 | RAG for documentation and runbooks | 🧪 Build knowledge base |
-| W40 | AI agents for infrastructure tasks | 🧪 LangChain agents |
+### Week 1
 
-**🏆 Project**: AI operations assistant with RAG over your runbooks, automated troubleshooting suggestions.
+- Pick pipeline tool (GitHub Actions / GitLab CI)
+- Build: lint + basic tests + artifact build
 
----
+### Week 2
 
-### Month 11: Platform Engineering Capstone
+- Pipeline deploy to a lab environment (VM or container)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W41 | Design internal platform architecture | 📖 Platform Engineering on K8s |
-| W42 | Self-service infrastructure patterns | 🧪 Build golden paths |
-| W43 | Compliance as code (OPA, Checkov) | 🧪 Policy pipeline |
-| W44 | FinOps automation | 🧪 Cost optimization |
+### Week 3
 
-**🏆 Project**: Complete IDP with self-service, guardrails, cost visibility, and compliance automation.
+- Secrets handling + environment separation (dev/test/prod mindset)
+
+### Week 4
+
+- Rollback + versioning + release notes template
+
+**Deliverables:** pipeline repo + runbook “how deployments work” + rollback procedure.
 
 ---
 
-### Month 12: Career Launch
+# Month 7 — Containers + Kubernetes fundamentals (hands-on labs)
 
-| Week | Focus | Lab/CTF |
-|------|-------|---------|
-| W45 | Portfolio consolidation, blog posts | 📝 3 technical articles |
-| W46 | CKA/AWS SAA intensive prep | 🧪 Practice exams |
-| W47 | System design interview prep | 🎮 [Pramp](https://pramp.com) |
-| W48 | Networking at Sophia Antipolis events | 🤝 Riviera DEV, NiceTech |
+**Goal:** you can run and debug workloads on K8s.
 
-**🏆 Capstone**: End-to-end platform: IaC → GitOps → K8s → Observability → AI-Ops → Security. Your portfolio centerpiece.
+### Week 1–2
 
----
+- Core objects: Pods, Deployments, Services, Ingress
+- Labs: KubeAcademy + KodeKloud [kube.academy+1](https://kube.academy/?utm_source=chatgpt.com)
 
-## 🇫🇷 Local Network (Sophia Antipolis/Monaco)
+### Week 3
 
-| Resource | Type |
-|----------|------|
-| [Riviera DEV](https://rivieradev.fr) | Annual conference (May) |
-| [French Riviera DevOps](https://www.meetup.com/french-riviera-devops/) | Monthly meetups |
-| [NiceTech](https://www.meetup.com/nicetech/) | Tech community |
-| [Monaco Tech](https://monacotech.mc) | Startup ecosystem |
-| **Key employers**: Amadeus, Thales, SAP, ARM, Orange |
+- ConfigMaps/Secrets + health checks + autoscaling basics
+
+### Week 4
+
+- Troubleshooting drills (crashloop, DNS, image pull, networking)
+
+**Deliverables:** K8s “starter platform” + troubleshooting cheat sheet.
 
 ---
 
-## 🏅 Certification Path
+# Month 8 — Kubernetes operations (the “hire me” layer)
 
-| When | Cert | Why |
-|------|------|-----|
-| Month 4 | **Terraform Associate** | IaC credibility |
-| Month 8 | **CKA** | Industry standard |
-| Month 12 | **AWS SAA** or **Azure AZ-104** | Cloud expertise |
+**Goal:** you can operate a cluster like an SRE-lite.
+
+### Week 1
+
+- Ingress + certificates (renewal plan)
+
+### Week 2
+
+- Storage classes + backups for workloads (concept + implementation)
+
+### Week 3
+
+- Cluster upgrades: plan + staging + rollback strategy
+
+### Week 4
+
+- RBAC + admission controls basics (safe defaults)
+
+**Deliverables:** ops runbook + upgrade runbook + “day-2 operations” checklist.
 
 ---
 
-## 🎯 12-Month Outcomes
+# Month 9 — Observability (metrics/logs/traces) + incident workflow
 
-- [ ] **8+ advanced GitHub repos** with production patterns
-- [ ] **3+ technical blog posts** on Medium/Dev.to
-- [ ] **2 certifications** minimum
-- [ ] **Complete platform** as portfolio centerpiece
-- [ ] **Local network** of DevOps/SRE professionals
+**Goal:** you detect issues early and resolve fast.
+
+### Week 1
+
+- Metrics baseline (Prometheus/Grafana or equivalent)
+
+### Week 2
+
+- Central logs (Elastic fits your current stack)
+
+### Week 3
+
+- Tracing basics (OpenTelemetry concepts)
+
+### Week 4
+
+- On-call simulation: 3 alerts → triage → root cause → fix → postmortem
+
+**Deliverables:** dashboards + alert rules + postmortem template + 1 real incident report (from a drill).
 
 ---
 
-> **Your edge**: You already know the fundamentals. This roadmap focuses on the skills that AI can't easily replace—architecture, security, reliability engineering, and the judgment to know when NOT to automate.
+# Month 10 — Security engineering for sysadmins (defensive, practical)
 
-**Bonne chance! 🚀**
+**Goal:** harden systems and reduce blast radius, without becoming “SOC-only”.
+
+### Week 1
+
+- Identity security: MFA everywhere possible, conditional access patterns
+
+### Week 2
+
+- Secrets management approach (vaulted secrets, rotation notes)
+
+### Week 3
+
+- Endpoint hardening baseline (Windows + Linux servers) + audit logging
+
+### Week 4
+
+- Attack-surface review + remediation sprint
+    
+    Optional gamified practice: TryHackMe / HTB Academy paths (choose defensive/infra modules) [TryHackMe+1](https://tryhackme.com/paths?utm_source=chatgpt.com)
+    
+
+**Deliverables:** hardening checklist + “security baseline” Ansible role + logging coverage document.
+
+---
+
+# Month 11 — Reliability engineering + DR (gamedays)
+
+**Goal:** you can keep services available and recover under pressure.
+
+### Week 1
+
+- Define SLOs (simple): availability + latency or error rate
+
+### Week 2
+
+- Chaos drills: DNS failure, cert expired, disk full, node down
+
+### Week 3
+
+- DR drill: restore critical service end-to-end (not just VM)
+
+### Week 4
+
+- Cost/performance review: right-sizing + storage retention tuning
+
+**Deliverables:** SLO doc + gameday reports + DR report with achieved RTO/RPO.
+
+---
+
+# Month 12 — Capstone: “Mini-platform” (hybrid, production-style)
+
+**Goal:** one coherent project that proves you’re “AI-proof”.
+
+Capstone build (end-to-end):
+
+- Terraform deploy (cloud landing zone lite)
+- App/workload on Kubernetes
+- Identity/RBAC
+- Observability (metrics + logs + alerts)
+- Backups + restore test
+- Runbooks + diagrams + demo video (optional)
+
+**Deliverables:** one polished repo + architecture PDF + runbooks + evidence pack.
